@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CBM OS — Staff Analysis &amp; Setup Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF3E0;      /* background */
+    --sand:#F2E7CD;       /* surface / cards-alt */
+    --shell:#F6EDD8;      /* softer surface */
+    --brown:#603B18;      /* primary — headings, text, links, buttons */
+    --brown-soft:#4A3014; /* body text */
+    --mocha:#87694A;      /* secondary / accents */
+    --amber:#BE7E1E;      /* golden amber accent */
+    --amber-soft:#C8862A;
+    --border:#E2D2AE;     /* warm sand border */
+    --ink:#2E1F0E;        /* deep brown for code surfaces */
+    --muted:#8A7253;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--cream); color:var(--brown-soft);
+    font:16px/1.65 "Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-weight:400; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 24px 96px}
+  header.hero{
+    background:linear-gradient(120deg,#5A360F 0%,var(--brown) 48%,var(--mocha) 100%);
+    color:var(--cream); padding:56px 24px 48px; margin-bottom:8px;
+  }
+  header.hero .inner{max-width:860px; margin:0 auto}
+  header.hero .kicker{text-transform:uppercase; letter-spacing:.2em; font-size:12px; font-weight:700; color:#EAD9A8}
+  header.hero h1{margin:.2em 0 .2em; font-size:40px; font-weight:800; letter-spacing:-.02em; line-height:1.08}
+  header.hero p{margin:0; font-size:18px; max-width:660px; color:#F2E7CD; font-weight:400}
+  header.hero .meta{margin-top:18px; font-size:13px; color:#D8C49A}
+  h2{
+    color:var(--brown); font-size:27px; font-weight:800; letter-spacing:-.015em; margin:50px 0 4px;
+    padding-bottom:8px; border-bottom:2px solid var(--border);
+  }
+  h2 .num{color:var(--amber); font-weight:800; margin-right:10px}
+  h3{color:var(--brown); font-size:19px; font-weight:700; margin:28px 0 6px; letter-spacing:-.01em}
+  p{margin:10px 0}
+  a{color:var(--brown); font-weight:600; text-decoration:none; border-bottom:1px solid rgba(190,126,30,.5)}
+  a:hover{color:var(--amber)}
+  code{
+    background:var(--shell); color:#7A4A14; padding:1.5px 6px; border-radius:5px;
+    border:1px solid #EBDDBC; font:13.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  pre{
+    background:var(--ink); color:#F1E7CF; padding:18px 20px; border-radius:10px;
+    overflow:auto; font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
+    border:1px solid #4A3014;
+  }
+  pre code{background:none; color:inherit; padding:0; border:none}
+  pre .c{color:#C0A875}      /* comment — warm sand */
+  pre .k{color:#E8A94B}      /* keyword — amber */
+  pre .v{color:#E9D9B0}      /* value — cream */
+  .card{
+    background:#FFFDF6; border:1px solid var(--border); border-radius:12px;
+    padding:20px 24px; margin:18px 0; box-shadow:0 1px 0 rgba(96,59,24,.05);
+  }
+  .callout{border-left:4px solid var(--mocha); border-radius:10px; padding:14px 18px; margin:18px 0; background:#FFFDF6}
+  .callout.warn{border-left-color:var(--amber); background:#FCF3DE}
+  .callout.good{border-left-color:var(--brown); background:#F6EEDA}
+  .callout .lbl{font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:4px}
+  .callout .lbl{color:var(--mocha)}
+  .callout.warn .lbl{color:#9A6311}
+  .callout.good .lbl{color:var(--brown)}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:14.5px}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top}
+  th{background:var(--sand); color:var(--brown); font-weight:700}
+  tr:nth-child(even) td{background:#FBF5E6}
+  ol,ul{padding-left:22px} li{margin:6px 0}
+  .pill{display:inline-block; background:var(--brown); color:var(--cream); font-size:11px; font-weight:700;
+    padding:3px 11px; border-radius:200px; letter-spacing:.04em; vertical-align:middle}
+  .pill.amber{background:var(--amber)} .pill.mocha{background:var(--mocha)}
+  .toc{background:var(--sand); border-radius:12px; padding:18px 24px; margin:24px 0; font-size:15px}
+  .toc strong{display:block; text-transform:uppercase; letter-spacing:.1em; font-size:12px; color:var(--muted); margin-bottom:8px}
+  .toc ol{margin:0; columns:2; column-gap:32px}
+  .ascii{font:12.5px/1.45 ui-monospace,Menlo,monospace; white-space:pre; color:var(--brown)}
+  .layerbox{background:#FFFDF6;border:1px solid var(--border);border-radius:12px;padding:6px 0;margin:16px 0;overflow:auto}
+  footer{margin-top:64px; padding-top:20px; border-top:2px solid var(--border); font-size:13px; color:var(--muted)}
+  .tag-do{color:var(--brown);font-weight:700}
+  .tag-dont{color:#A85A12;font-weight:700}
+  hr{border:none;border-top:1px solid var(--border);margin:40px 0}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <div class="kicker">🥥 Coconut Breeze Media — Internal</div>
+    <h1>CBM OS — Staff Analysis &amp; Setup Guide</h1>
+    <p>What the system is, why it's built this way, and exactly how to get set up — with a deep focus on the Airtable PAT model and how we version the whole OS.</p>
+    <div class="meta">Owner: Juli (Founder &amp; CEO) &nbsp;·&nbsp; Audience: CBM + GAP staff &amp; contractors &nbsp;·&nbsp; Last updated: 2026-06-26</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <strong>In this guide</strong>
+    <ol>
+      <li><a href="#what">What CBM OS is</a></li>
+      <li><a href="#arch">The three-layer architecture</a></li>
+      <li><a href="#tour">Folder tour &amp; the rules</a></li>
+      <li><a href="#pat">★ The Airtable PAT model</a></li>
+      <li><a href="#patsetup">★ PAT setup — step by step</a></li>
+      <li><a href="#version">★ Versioning &amp; backup</a></li>
+      <li><a href="#onboard">New-staff onboarding checklist</a></li>
+      <li><a href="#rules">Hard rules (never break)</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="what"><span class="num">01</span>What CBM OS is</h2>
+  <p><strong>CBM OS is Juli's AI-native operating system</strong> — an Obsidian vault at <code>~/CBM OS/</code> that is the single source of truth for every project, client, person, decision, and piece of reusable knowledge across both <span class="pill mocha">CBM</span> creative/technical work and <span class="pill amber">GAP</span> consulting deliverables.</p>
+  <p>The guiding principle is one line:</p>
+  <div class="callout good"><span class="lbl">Operating philosophy</span><em>"Own your ideas. Rent the AI."</em> Everything Juli thinks lives in plain Markdown she controls. The AI tool (Claude today; Codex, Gemini, or local tomorrow) is a renter that points <em>at</em> the vault — never the owner of it.</div>
+  <p>Why this matters for you as staff: when you work a project, <strong>the vault is authority, not the workspace folder.</strong> Code, scripts, and <code>.env</code> files live in workspaces under <code>~/CBM/</code> and <code>~/GAP/</code> — but context, status, and decisions live in the vault. If a workspace's notes disagree with the vault, the vault wins.</p>
+
+  <!-- 2 -->
+  <h2 id="arch"><span class="num">02</span>The three-layer architecture</h2>
+  <p>The whole system is deliberately split into three layers so it stays AI-tool-agnostic. The bottom layer is Juli's thinking, the middle layer translates it for any AI, and the top layer is whichever AI tool is plugged in this week.</p>
+  <div class="layerbox">
+<div class="ascii" style="padding:14px 20px">┌─────────────────────────────────────────────────────────────┐
+│  LAYER 3 · AI Tool        Claude Code today                  │
+│                           (Codex / Gemini / local tomorrow)  │
+└───────────────────────────┬─────────────────────────────────┘
+                            │  reads
+┌───────────────────────────▼─────────────────────────────────┐
+│  LAYER 2 · AIOS — the translation layer                      │
+│  me.md · vault-map.md · skill-map.md · skills/ · systems/    │
+└───────────────────────────┬─────────────────────────────────┘
+                            │  describes
+┌───────────────────────────▼─────────────────────────────────┐
+│  LAYER 1 · Ideaverse — Juli's own thinking                   │
+│  Atlas · Calendar · Efforts · Projects · Inbox · Raw        │
+└─────────────────────────────────────────────────────────────┘</div>
+  </div>
+  <p><strong>The key design move:</strong> no AI-tool-specific logic ever goes in the bottom two layers. <code>CLAUDE.md</code> and <code>AGENTS.md</code> at the vault root are intentionally <em>thin pointers</em> — each one just says "go read the three AIOS core files." That's how the OS ports cleanly to a different AI later without rewriting the knowledge base.</p>
+  <h3>The session-start ritual</h3>
+  <p>Every new AI session starts the same way. Any AI tool reads these three files, in order, before doing anything:</p>
+  <table>
+    <tr><th>File</th><th>What it loads</th></tr>
+    <tr><td><code>AIOS/me.md</code></td><td>Who Juli is + the working contract (be a collaborator, push back, client-ready by default).</td></tr>
+    <tr><td><code>AIOS/vault-map.md</code></td><td>How the vault is organized and the strict rules for <em>where</em> new notes may be created.</td></tr>
+    <tr><td><code>AIOS/skill-map.md</code></td><td>The registry of skills and when each one should trigger.</td></tr>
+  </table>
+  <div class="callout"><span class="lbl">Shortcut</span>The trigger prompt is hotkeyed to <code>SSK</code>: <em>"Read <code>AIOS/me.md</code>, <code>AIOS/vault-map.md</code>, and <code>AIOS/skill-map.md</code>. Confirm, then await instruction."</em></div>
+
+  <!-- 3 -->
+  <h2 id="tour"><span class="num">03</span>Folder tour &amp; the rules</h2>
+  <table>
+    <tr><th>Folder</th><th>Purpose</th><th>Who writes here</th></tr>
+    <tr><td><code>AIOS/</code></td><td>The AI translation layer — identity, vault map, skill registry, templates, multi-skill systems.</td><td>AI + Juli</td></tr>
+    <tr><td><code>Atlas/</code></td><td>Knowledge that compounds — People, Clients, Domains (reusable technique notes), Decisions (ADRs), Maps.</td><td>Juli (AI assists)</td></tr>
+    <tr><td><code>Calendar/</code></td><td>Time-anchored — daily briefs, logs, weekly reviews.</td><td>AI + Juli</td></tr>
+    <tr><td><code>Efforts/</code></td><td>Active work ranked by heat: On / Ongoing / Simmering / Sleeping.</td><td>Juli</td></tr>
+    <tr><td><code>Projects/</code></td><td><strong>Source of truth</strong> for every project. <code>_projects.json</code> is the authoritative index; each project has a pointer note.</td><td>Juli + AI</td></tr>
+    <tr><td><code>Inbox/</code></td><td>Shapeless capture. Only processed via <code>/process-inbox</code> — never auto-organized.</td><td>Juli</td></tr>
+    <tr><td><code>Raw/</code></td><td>Immutable sources — PDFs, transcripts, exports. Cite it; never mutate it.</td><td>Juli only</td></tr>
+  </table>
+  <div class="callout warn"><span class="lbl">Two folders are off-limits to the AI</span>The AI may <span class="tag-dont">never</span> create notes in <code>Raw/</code> (immutable) or auto-organize <code>Inbox/</code> (Juli owns capture). New notes are only allowed in the specific locations listed in <code>vault-map.md</code> Part 2.</div>
+
+  <!-- 4 — THE BIG ONE -->
+  <h2 id="pat"><span class="num">04</span>★ The Airtable PAT model <span class="pill amber">read carefully</span></h2>
+  <p>This is the part to internalize before you touch any client data. CBM runs many Airtable bases across many clients, and the security model is built on one non-negotiable idea:</p>
+  <div class="callout warn"><span class="lbl">The rule that governs everything</span><strong>Credentials never cross projects.</strong> One project's Personal Access Token (PAT) is never another project's PAT. Treat every project as if it were a different company — because for credential purposes, it is.</div>
+
+  <h3>Where credentials live (and don't)</h3>
+  <p>There are two physically separate places, and keeping them separate is the whole game:</p>
+  <table>
+    <tr><th>Location</th><th>Holds</th><th>Secrets?</th></tr>
+    <tr><td>The vault — <code>CBM OS/Projects/&lt;type&gt;/&lt;slug&gt;/</code></td><td>The <code>pointer.md</code> (context, deliverables, status) and a <code>.env.example</code> <em>template only</em>, with placeholders like <code>pat_REPLACE_ME</code>.</td><td><span class="tag-dont">NO — ever</span></td></tr>
+    <tr><td>The workspace — <code>&lt;workspace&gt;/.claude/.env</code></td><td>The <strong>real</strong> Airtable base ID + PAT for that one project. Gitignored. Read only by that workspace's own scripts.</td><td><span class="tag-do">YES — only here</span></td></tr>
+  </table>
+  <p>The vault is readable by any AI that points at it, so <strong>no real secret is ever allowed in the vault</strong>. The real <code>.env</code> sits in the live workspace, is listed in <code>.gitignore</code>, and never gets committed or copied back into the vault.</p>
+
+  <h3>How a project records its base (without the secret)</h3>
+  <p>The authoritative index <code>Projects/_projects.json</code> stores each project's <em>non-secret</em> <code>airtable_base_id</code> (e.g. <code>appXXXXXXXXXXXXXX</code>) so routing and tooling know which base to hit. The <strong>PAT itself is never in JSON</strong> — only the base ID, which is not sensitive on its own. The PAT lives exclusively in the workspace <code>.env</code>.</p>
+
+  <h3>What a PAT should actually be scoped to</h3>
+  <p>When you create a PAT in Airtable, scope it to the <em>minimum</em> that the project needs:</p>
+  <ul>
+    <li><span class="tag-do">Do</span> grant access to <strong>only that client's base(s)</strong> — never "all current and future bases."</li>
+    <li><span class="tag-do">Do</span> grant only the scopes the work needs (typically <code>data.records:read</code>, <code>data.records:write</code>, and <code>schema.bases:read</code>).</li>
+    <li><span class="tag-dont">Don't</span> reuse one PAT across two clients to "save time." That's the one thing this whole model exists to prevent.</li>
+  </ul>
+
+  <!-- 5 -->
+  <h2 id="patsetup"><span class="num">05</span>★ PAT setup — step by step</h2>
+  <p>This is the exact path to wire a project's Airtable credentials. Do this once per project workspace.</p>
+
+  <h3>Step 1 — Create the scoped PAT in Airtable</h3>
+  <ol>
+    <li>Go to <a href="https://airtable.com/create/tokens">airtable.com/create/tokens</a> → <strong>Create token</strong>.</li>
+    <li>Name it for the project, e.g. <code>cbm-&lt;client&gt;-readwrite</code>.</li>
+    <li>Add scopes: <code>data.records:read</code>, <code>data.records:write</code>, <code>schema.bases:read</code>.</li>
+    <li>Under <strong>Access</strong>, add <em>only</em> that client's base(s).</li>
+    <li>Copy the token (starts with <code>pat...</code>). You only see it once.</li>
+  </ol>
+
+  <h3>Step 2 — Find the base ID</h3>
+  <p>It's already in <code>Projects/_projects.json</code> under the project's <code>airtable_base_id</code>. Or open the base in your browser — the URL contains <code>app...</code> (that's the base ID).</p>
+
+  <h3>Step 3 — Create the workspace <code>.env</code> from the template</h3>
+  <p>Every workspace ships a template. Copy it to the real (gitignored) location and fill it in:</p>
+<pre><code><span class="c"># from inside the project workspace</span>
+cp .claude/.env.template .claude/.env
+
+<span class="c"># then edit .claude/.env to contain the real values:</span>
+<span class="k">AIRTABLE_BASE_ID</span>=<span class="v">appXXXXXXXXXXXXXX</span>
+<span class="k">AIRTABLE_PAT</span>=<span class="v">pat_your_real_token_here</span></code></pre>
+
+  <h3>Step 4 — Confirm it's gitignored</h3>
+  <p>Every workspace <code>.gitignore</code> already lists these. Confirm before your first commit:</p>
+<pre><code>.claude/.env
+.claude/settings.local.json
+.env
+*.pat</code></pre>
+  <div class="callout warn"><span class="lbl">Sanity check</span>Run <code>git status</code> after creating <code>.env</code>. If <code>.claude/.env</code> shows up as a tracked/untracked file Git wants to add — <span class="tag-dont">stop</span> and fix the <code>.gitignore</code> before doing anything else.</div>
+
+  <h3>Step 5 — Use the credentials from a script</h3>
+  <p>Two supported ways to load the env. <strong>Python</strong> uses the shared <code>load_env.py</code> helper (in each workspace's <code>05 - Scripts/</code>):</p>
+<pre><code><span class="k">from</span> load_env <span class="k">import</span> load
+load()
+PAT = os.environ[<span class="v">"AIRTABLE_PAT"</span>]
+BASE = os.environ[<span class="v">"AIRTABLE_BASE_ID"</span>]</code></pre>
+  <p><strong>Shell / curl</strong> sources the file directly:</p>
+<pre><code>set -a; source .claude/.env; set +a
+curl <span class="v">"https://api.airtable.com/v0/$AIRTABLE_BASE_ID/Table"</span> \
+  -H <span class="v">"Authorization: Bearer $AIRTABLE_PAT"</span></code></pre>
+  <div class="callout good"><span class="lbl">Why the helper exists</span><code>load_env.py</code> reads <code>../.claude/.env</code> relative to the script and uses <code>setdefault</code> — so a value already in the environment wins and nothing leaks into logs. Import it; don't paste keys into the script.</div>
+
+  <h3>If a secret ever leaks</h3>
+  <div class="callout warn"><span class="lbl">Incident response — do all three</span>
+    <ol style="margin:6px 0 0">
+      <li><strong>Remove</strong> it from wherever it landed immediately.</li>
+      <li><strong>Rotate</strong> the credential — regenerate the PAT in Airtable so the leaked one is dead.</li>
+      <li><strong>Log</strong> the incident in <code>Atlas/Decisions/</code> so we have a record.</li>
+    </ol>
+  </div>
+
+  <!-- 6 -->
+  <h2 id="version"><span class="num">06</span>★ Versioning &amp; backup of the OS</h2>
+  <p>The whole vault is a flat tree of plain-text Markdown — which is exactly what makes it cheap to version and bulletproof to recover. We run versioning at two complementary levels.</p>
+
+  <h3>Level 1 — Live versioning via Obsidian Sync</h3>
+  <p>Obsidian's core <code>sync</code> plugin is enabled on the vault. This gives continuous, real-time versioning: every save is propagated, and Sync keeps per-file <strong>version history</strong> you can roll back to from inside Obsidian. This is the "undo my last hour" layer.</p>
+  <div class="callout"><span class="lbl">Note for staff</span>You generally <em>read</em> the vault, not edit it directly — most writes happen through the AI following the <code>vault-map.md</code> rules. If you do edit in Obsidian, Sync history is your safety net.</div>
+
+  <h3>Level 2 — Versioned off-site archive via <code>backup-to-drive.sh</code></h3>
+  <p>The deeper safety net is <code>Scripts/backup-to-drive.sh</code>. It mirrors the vault to Google Drive with <code>rclone</code> — and crucially, it's a <strong>versioned</strong> mirror, not a destructive one:</p>
+  <ul>
+    <li>Current state syncs to <code>gdrive:CBM-OS-Backup</code>.</li>
+    <li>Anything <strong>deleted or overwritten</strong> is preserved under <code>gdrive:CBM-OS-Archive/&lt;timestamp&gt;/</code> via rclone's <code>--backup-dir</code>.</li>
+    <li>An exclude list (<code>Scripts/.backup-exclude.txt</code>) keeps junk out; every run is logged to <code>Scripts/.backup.log</code>.</li>
+  </ul>
+<pre><code><span class="c"># mirror current vault, archive anything changed/removed</span>
+rclone sync <span class="v">"$VAULT"</span> gdrive:CBM-OS-Backup \
+  --exclude-from .backup-exclude.txt \
+  --backup-dir gdrive:CBM-OS-Archive/$(date +%Y%m%d-%H%M%S) \
+  --log-file .backup.log --log-level INFO</code></pre>
+  <div class="callout good"><span class="lbl">Why this design is "optimized"</span>The two layers cover different failure modes with zero overlap. <strong>Sync</strong> = fast, per-file undo while you work. <strong>rclone archive</strong> = immutable, timestamped, off-site point-in-time recovery — so a bad bulk operation, a sync conflict, or a lost machine never loses history. Plain Markdown means every archived version is human-readable forever, with no proprietary lock-in. That's the "own your ideas" principle made operational.</div>
+
+  <h3>What is deliberately NOT versioned</h3>
+  <table>
+    <tr><th>Not versioned / not backed up</th><th>Why</th></tr>
+    <tr><td>Workspace <code>.claude/.env</code> files (they live <em>outside</em> the vault)</td><td>Secrets never enter the vault, so they never enter Sync or the Drive archive. By design.</td></tr>
+    <tr><td>Anything in <code>.backup-exclude.txt</code> (<code>.DS_Store</code>, caches, etc.)</td><td>Noise that would bloat the archive.</td></tr>
+  </table>
+  <div class="callout warn"><span class="lbl">Corollary</span>Because secrets are never versioned, <strong>losing a workspace means re-creating its <code>.env</code></strong> — the PAT is rotated/re-pasted, not restored from backup. That's the safe tradeoff: no secret is ever sitting in a backup waiting to leak.</div>
+
+  <!-- 7 -->
+  <h2 id="onboard"><span class="num">07</span>New-staff onboarding checklist</h2>
+  <div class="card">
+    <ol>
+      <li><strong>Get vault access.</strong> Juli adds you to Obsidian Sync for the CBM OS vault (read-oriented).</li>
+      <li><strong>Read the three core files</strong> once yourself: <code>AIOS/me.md</code>, <code>AIOS/vault-map.md</code>, <code>AIOS/skill-map.md</code>. They <em>are</em> the contract.</li>
+      <li><strong>Learn the routing.</strong> <code>Projects/_projects.json</code> is the authoritative project index — path, slug, slash command, status, deadline, base ID for every workspace.</li>
+      <li><strong>Pick up your project workspace</strong> under <code>~/CBM/</code> or <code>~/GAP/</code>.</li>
+      <li><strong>Wire its Airtable PAT</strong> following Section 05 — scoped token, real <code>.env</code> from template, confirm gitignored.</li>
+      <li><strong>Verify the backup path</strong> is healthy if you own infra: <code>rclone listremotes</code> shows <code>gdrive:</code>, and <code>Scripts/.backup.log</code> shows recent successful runs.</li>
+      <li><strong>Reference deliverables by number</strong> on GAP work (e.g. "&lt;Project&gt; #34"), always.</li>
+    </ol>
+  </div>
+
+  <!-- 8 -->
+  <h2 id="rules"><span class="num">08</span>Hard rules (never break)</h2>
+  <div class="callout warn">
+    <span class="lbl">Non-negotiables</span>
+    <ol style="margin:6px 0 0">
+      <li><strong>Never commit, paste, or surface a credential.</strong> All secrets stay in workspace <code>.claude/.env</code> files — never in the vault, JSON, settings, or scripts.</li>
+      <li><strong>Per-project credentials don't cross projects.</strong> One PAT, one client.</li>
+      <li><strong>The vault is the source of truth.</strong> <code>pointer.md</code> wins over any workspace <code>CLAUDE.md</code> on disagreement.</li>
+      <li><strong>Stay out of <code>Raw/</code></strong> — immutable source material. Cite, don't mutate.</li>
+      <li><strong>Don't auto-organize <code>Inbox/</code></strong> — that's Juli's via <code>/process-inbox</code>.</li>
+      <li><strong>Cite GAP deliverables by number.</strong> Non-negotiable for billable clarity.</li>
+    </ol>
+  </div>
+
+  <footer>
+    🥥 <strong>Coconut Breeze Media</strong> — CBM OS Staff Setup Guide · generated for internal use · <code>CBM OS/docs/CBM-OS-Staff-Setup-Guide.html</code><br>
+    Source of truth for any field in this doc: <code>CBM OS/README.md</code>, <code>AIOS/me.md</code>, <code>Projects/GAP/_README.md</code>, and <code>Scripts/backup-to-drive.sh</code>. When those change, regenerate this.
+  </footer>
+
+</div>
+</body>
+</html>
